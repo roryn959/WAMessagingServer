@@ -18,6 +18,7 @@ public class ReceiverController {
 
     @GetMapping("/webhook")
     public ResponseEntity<String> verification(@RequestParam("hub.mode") String mode, @RequestParam("hub.verify_token") String verify_token, @RequestParam("hub.challenge") String challenge){
+        System.out.println("Received verification request...");
         // Check all necessary fields were entered
         if (mode != null && verify_token != null && challenge != null){
             // Check mode and verify token are correct
@@ -43,5 +44,10 @@ public class ReceiverController {
         }
 
         return "okay";
+    }
+
+    @PostMapping(value = "/send")
+    public String sendMessage(@RequestBody String message){
+        return "Not yet implemented";
     }
 }
