@@ -16,6 +16,11 @@ public class ReceiverController {
 
     private String verify_token = "rozza";
 
+    @GetMapping("/")
+    public String test(){
+        return "Test passed!";
+    }
+
     @GetMapping("/webhook")
     public ResponseEntity<String> verification(@RequestParam("hub.mode") String mode, @RequestParam("hub.verify_token") String verify_token, @RequestParam("hub.challenge") String challenge){
         System.out.println("Received verification request...");
