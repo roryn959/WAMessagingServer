@@ -1,11 +1,13 @@
-package com.rory.receiver;
+package com.rory.receiver.services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PayloadHandler {
+public class MessageReceiverService {
 
     public static void temp(JSONObject jsonObject){
         JSONArray entryArray = jsonObject.getJSONArray("entry");
@@ -22,5 +24,10 @@ public class PayloadHandler {
             String currentMessageTextBody = currentMessageText.getString("body");
             System.out.println(currentMessageTextBody);
         }
+    }
+
+    public static ResponseEntity<String> handleMessage(JSONObject jsonObject){
+        System.out.println(jsonObject);
+        return new ResponseEntity<>("Message Received", HttpStatus.OK);
     }
 }
