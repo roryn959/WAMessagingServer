@@ -30,7 +30,8 @@ public class MessageReceiverService {
         JSONArray messages = jsonObject.getJSONArray("entry").getJSONObject(0).getJSONArray("changes").getJSONObject(0).getJSONObject("value").getJSONArray("messages");
         for (int i=0; i<messages.length(); i++){
             JSONObject message = messages.getJSONObject(i);
-            System.out.println(message.getString("body"));
+            JSONObject messageTextObject = message.getJSONObject("text");
+            System.out.println(messageTextObject.getString("body"));
         }
         return new ResponseEntity<>("Message Received", HttpStatus.OK);
     }
