@@ -68,9 +68,9 @@ public class GeneralController {
     public String sendTemplate(@RequestParam("access_token") String access_token){
         try {
             MessageSenderService.sendTemplate(access_token);
-            return "Successful!";
+            return "Attempted message send...";
         } catch (IOException e){
-            return "Experienced some error...";
+            return "Experienced an IO error. Check that the URL still exists and that the body JSON is properly formed.";
         }
     }
 }
