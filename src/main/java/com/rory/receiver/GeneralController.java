@@ -42,16 +42,18 @@ public class GeneralController {
     public String sendMessage(@RequestBody String messageJSONString){
         // Convert body to JSON and extract message
         String message;
+        String access_token;
         try {
             JSONObject messageJSON = new JSONObject(messageJSONString);
             message = messageJSON.getString("text");
+            access_token = messageJSON.getString("access_token");
         } catch (JSONException e){
             System.out.println(e);
             return "Failed to read JSON";
         }
 
         try {
-            MessageSenderService.sendMessage(message);
+            MessageSenderService.sendMessage(message, access_token);
             return "Message sent";
         } catch (MalformedURLException e) {
             System.out.println(e);
@@ -63,9 +65,9 @@ public class GeneralController {
     }
 
     @GetMapping(value="/sendTemplate")
-    public String sendTemplate(){
+    public String sendTemplate(@RequestParam("access_token") String access_token){
         try {
-            MessageSenderService.sendTemplate();
+            MessageSenderService.sendTemplate(access_token);
             return "Successful!";
         } catch (IOException e){
             return "Experienced some error...";

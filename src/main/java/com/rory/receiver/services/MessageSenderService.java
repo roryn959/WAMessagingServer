@@ -15,8 +15,7 @@ public class MessageSenderService {
     private static final String urlEnd = "/messages?access_token=";
     private static final String fromNumber = "109606135123188";
     private static final String toNumber = "919148506961";
-    private static final String accessToken = "EAAQZBAimZBZCuUBAFswmFKJA7IwDLFunDnDW3v61m1iVTL9jIOCbL1DJUzZCC2Ld9NNWbRyNouzQu4bg7tM9ak5PzNCBkF38NE23jFL1iMaGYgxmZAhUWTZAZCZCmJQdH2A2Wpb1H1hknrrmzQ1BIqTtmZBGZAwH2vubLgaMZB8ldSKB2VUEaK9IlaCK99jieIqUZAZA8XCIEDw5t3gZDZD";
-    public static void sendMessage(String message) throws MalformedURLException, IOException {
+    public static void sendMessage(String message, String accessToken) throws MalformedURLException, IOException {
         System.out.println(message);
 
         // Establish connection
@@ -51,17 +50,19 @@ public class MessageSenderService {
         System.out.println(connection.getResponseMessage());
     }
 
-    public static void sendTemplate() throws IOException {
+    public static void sendTemplate(String accessToken) throws IOException {
 
         // Establish connection
-        URL url = new URL("https://rorytest.free.beeceptor.com");
+        URL url = new URL("https://graph.facebook.com/v13.0/109606135123188/messages");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
 
+        System.out.println(connection.getURL());
+
         // Add headers
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, MessageSenderService.accessToken);
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, accessToken);
 
         // Build body
         JSONObject messageJSON = new JSONObject();
