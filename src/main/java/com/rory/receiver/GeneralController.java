@@ -61,4 +61,14 @@ public class GeneralController {
             return "IO Exception";
         }
     }
+
+    @GetMapping(value="/sendTemplate")
+    public String sendTemplate(){
+        try {
+            MessageSenderService.sendTemplate();
+            return "Successful!";
+        } catch (IOException e){
+            return "Experienced some error...";
+        }
+    }
 }

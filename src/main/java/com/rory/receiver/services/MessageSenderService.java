@@ -15,14 +15,13 @@ public class MessageSenderService {
     private static final String urlEnd = "/messages?access_token=";
     private static final String fromNumber = "109606135123188";
     private static final String toNumber = "919148506961";
-    private static final String accessToken = "EAAQZBAimZBZCuUBACSewjuCuu73chXuZAJ1UQhJt9xowFi6GGWPpZA4N4ldwwGL1dY6Ih896ZBjgFIy690zluTvxac4cyqvZCtvX7AduEuzPYLum0GICmnk3nlUZB2NKZCnKw5SsUm7SZApF9WAHZCaZA7hMirQ495suNkYXrieNnDw3WTNuQZCVZCfpH0HzOMru1tt7f9FJVqesZBE0AZDZD";
+    private static final String accessToken = "EAAQZBAimZBZCuUBAFswmFKJA7IwDLFunDnDW3v61m1iVTL9jIOCbL1DJUzZCC2Ld9NNWbRyNouzQu4bg7tM9ak5PzNCBkF38NE23jFL1iMaGYgxmZAhUWTZAZCZCmJQdH2A2Wpb1H1hknrrmzQ1BIqTtmZBGZAwH2vubLgaMZB8ldSKB2VUEaK9IlaCK99jieIqUZAZA8XCIEDw5t3gZDZD";
     public static void sendMessage(String message) throws MalformedURLException, IOException {
         System.out.println(message);
 
         // Establish connection
         URL url = new URL(urlStart + fromNumber + urlEnd + accessToken);
         //URL url = new URL("https://rorytest.free.beeceptor.com");
-        System.out.println(url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
@@ -48,6 +47,43 @@ public class MessageSenderService {
         OutputStream outStream = connection.getOutputStream();
         outStream.write(messageJSON.toString().getBytes());
 
+        System.out.println(connection.getResponseCode());
+        System.out.println(connection.getResponseMessage());
+    }
+
+    public static void sendTemplate() throws IOException {
+
+        // Establish connection
+        URL url = new URL("https://rorytest.free.beeceptor.com");
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+
+        // Add headers
+        connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, MessageSenderService.accessToken);
+
+        // Build body
+        JSONObject messageJSON = new JSONObject();
+        messageJSON.put("messaging_product", "whatsapp");
+        messageJSON.put("to", "919148506961");
+        messageJSON.put("type", "template");
+
+        JSONObject templateJSON = new JSONObject();
+        templateJSON.put("name", "hello_world");
+
+        JSONObject languageJSON = new JSONObject();
+        languageJSON.put("code", "en_US");
+
+        templateJSON.put("language", languageJSON);
+
+        messageJSON.put("template", templateJSON);
+
+        // Add body
+        OutputStream outStream = connection.getOutputStream();
+        outStream.write(messageJSON.toString().getBytes());
+
+        // Get result
         System.out.println(connection.getResponseCode());
         System.out.println(connection.getResponseMessage());
     }
