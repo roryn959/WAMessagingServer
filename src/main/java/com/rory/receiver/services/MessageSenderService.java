@@ -16,6 +16,7 @@ public class MessageSenderService {
     private static final String urlEnd = "/messages?access_token=";
     private static final String fromNumber = "109606135123188";
     private static final String toNumber = "919148506961";
+
     public static void sendMessage(String message, String accessToken) throws IOException {
         // Establish connection
         URL url = new URL(urlStart + fromNumber + urlEnd);
