@@ -12,7 +12,8 @@ import java.io.IOException;
 @Service
 public class MessageReceiverService {
 
-    public static ResponseEntity<String> handleMessage(JSONObject jsonObject) {
+    public static ResponseEntity<String> wiseManEcho(JSONObject jsonObject) {
+        // When message is received, responds with the same message content prepended with 'a wise man once said'
 
         try {
             JSONArray messages = jsonObject.getJSONArray("entry").getJSONObject(0).getJSONArray("changes").getJSONObject(0).getJSONObject("value").getJSONArray("messages");

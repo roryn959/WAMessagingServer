@@ -2,6 +2,8 @@ package com.rory.receiver.services;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -12,12 +14,14 @@ import java.net.URL;
 @Service
 public class MessageSenderService {
 
-    private static final String fromNumberID = "109606135123188";
-    private static final String urlString = "https://graph.facebook.com/v13.0/" + fromNumberID + "/messages";
+    // URL of the Meta endpoint we use to send messages. Insert the WhatsApp ID (WAID) relevant to the Meta App you want
+    // to send messages from (Not the phone number itself).
+    private static final String urlString = "https://graph.facebook.com/v13.0/" + EnvironmentalVariableRetriever.WAID + "/messages";
 
+    // The number to send messages to. Hardcoded in for this example.
     private static final String toNumber = "919148506961";
 
-    public static void sendMessage(String message) throws IOException {
+    public static ResponseEntity<String> sendMessage(String message) throws IOException {
 
         // Establish connection
         URL url = new URL(urlString);
@@ -27,12 +31,12 @@ public class MessageSenderService {
 
         // Add headers
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + AccessTokenHolder.access_token);
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + EnvironmentalVariableRetriever.access_token);
 
         // Build body
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("messaging_product", "whatsapp");
-        messageJSON.put("to", "919148506961");
+        messageJSON.put("to", MessageSenderService.toNumber);
 
         JSONObject textJSON = new JSONObject();
         textJSON.put("body", message);
@@ -43,31 +47,30 @@ public class MessageSenderService {
         OutputStream outStream = connection.getOutputStream();
         outStream.write(messageJSON.toString().getBytes());
 
-        // Get result
-        System.out.println(connection.getResponseCode());
-        System.out.println(connection.getResponseMessage());
+        // Get result and pass back
+        return new ResponseEntity<>(connection.getResponseMessage(), HttpStatus.valueOf(connection.getResponseCode()));
     }
 
-    public static void sendTemplate() throws IOException {
+    public static ResponseEntity<String> sendTemplate(String template_name) throws IOException {
 
         // Establish connection
-        URL url = new URL("https://graph.facebook.com/v13.0/109606135123188/messages");
+        URL url = new URL(MessageSenderService.urlString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
 
         // Add headers
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + AccessTokenHolder.access_token);
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + EnvironmentalVariableRetriever.access_token);
 
         // Build body
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("messaging_product", "whatsapp");
-        messageJSON.put("to", "919148506961");
+        messageJSON.put("to", MessageSenderService.toNumber);
         messageJSON.put("type", "template");
 
         JSONObject templateJSON = new JSONObject();
-        templateJSON.put("name", "hello_world");
+        templateJSON.put("name", template_name);
 
         JSONObject languageJSON = new JSONObject();
         languageJSON.put("code", "en_US");
@@ -76,12 +79,11 @@ public class MessageSenderService {
 
         messageJSON.put("template", templateJSON);
 
-        // Add body
+        // Add body to connection
         OutputStream outStream = connection.getOutputStream();
         outStream.write(messageJSON.toString().getBytes());
 
-        // Get result
-        System.out.println(connection.getResponseCode());
-        System.out.println(connection.getResponseMessage());
+        // Get result and pass back
+        return new ResponseEntity<>(connection.getResponseMessage(), HttpStatus.valueOf(connection.getResponseCode()));
     }
 }

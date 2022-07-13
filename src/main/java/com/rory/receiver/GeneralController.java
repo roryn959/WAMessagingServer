@@ -3,6 +3,8 @@ package com.rory.receiver;
 import com.rory.receiver.services.MessageReceiverService;
 import com.rory.receiver.services.MessageSenderService;
 import com.rory.receiver.services.VerificationService;
+
+import org.apache.coyote.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,6 @@ public class GeneralController {
 
     @GetMapping("/webhook")
     public ResponseEntity<String> verification(@RequestParam("hub.mode") String mode, @RequestParam("hub.verify_token") String verify_token, @RequestParam("hub.challenge") String challenge){
-        System.out.println("Received verification request...");
         return VerificationService.verify(mode, verify_token, challenge);
     }
 
@@ -31,44 +32,41 @@ public class GeneralController {
     public ResponseEntity<String> receiveMessage(@RequestBody String jsonString){
         try {
             JSONObject messageJSON = new JSONObject(jsonString);
-            return MessageReceiverService.handleMessage(messageJSON);
+            // For now as a test, call the service to echo the message.
+            return MessageReceiverService.wiseManEcho(messageJSON);
         } catch (JSONException e){
-            System.out.println(e);
-            return new ResponseEntity<>("JSON Exception", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping(value = "/sendText", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public String sendMessage(@RequestBody String messageJSONString){
+    public ResponseEntity<String> sendMessage(@RequestBody String messageJSONString){
         // Convert body to JSON and extract message
         String message;
         try {
             JSONObject messageJSON = new JSONObject(messageJSONString);
             message = messageJSON.getString("text");
         } catch (JSONException e){
-            System.out.println(e);
-            return "Failed to read JSON";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         try {
-            MessageSenderService.sendMessage(message);
-            return "Message sent";
+            return MessageSenderService.sendMessage(message);
         } catch (MalformedURLException e) {
-            System.out.println(e);
-            return "Malformed URL";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
-            System.out.println(e);
-            return "IO Exception";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping(value="/sendTemplate")
-    public String sendTemplate(){
+    public ResponseEntity<String> sendTemplate(@RequestParam("template_name") String template_name){
         try {
-            MessageSenderService.sendTemplate();
-            return "Attempted message send...";
+            return MessageSenderService.sendTemplate(template_name);
+        } catch (JSONException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IOException e){
-            return "Experienced an IO error. Check that the URL still exists and that the body JSON is properly formed.";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }
