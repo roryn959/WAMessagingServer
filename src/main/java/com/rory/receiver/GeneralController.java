@@ -38,22 +38,20 @@ public class GeneralController {
         }
     }
 
-    @PostMapping(value = "/send", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/sendText", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public String sendMessage(@RequestBody String messageJSONString){
         // Convert body to JSON and extract message
         String message;
-        String access_token;
         try {
             JSONObject messageJSON = new JSONObject(messageJSONString);
             message = messageJSON.getString("text");
-            access_token = messageJSON.getString("access_token");
         } catch (JSONException e){
             System.out.println(e);
             return "Failed to read JSON";
         }
 
         try {
-            MessageSenderService.sendMessage(message, access_token);
+            MessageSenderService.sendMessage(message);
             return "Message sent";
         } catch (MalformedURLException e) {
             System.out.println(e);
@@ -65,9 +63,9 @@ public class GeneralController {
     }
 
     @GetMapping(value="/sendTemplate")
-    public String sendTemplate(@RequestParam("access_token") String access_token){
+    public String sendTemplate(){
         try {
-            MessageSenderService.sendTemplate(access_token);
+            MessageSenderService.sendTemplate();
             return "Attempted message send...";
         } catch (IOException e){
             return "Experienced an IO error. Check that the URL still exists and that the body JSON is properly formed.";

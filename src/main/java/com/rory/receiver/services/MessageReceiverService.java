@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class MessageReceiverService {
 
@@ -18,10 +20,12 @@ public class MessageReceiverService {
             for (int i = 0; i < messages.length(); i++) {
                 JSONObject message = messages.getJSONObject(i);
                 JSONObject messageTextObject = message.getJSONObject("text");
-                System.out.println(messageTextObject.getString("body"));
+                String content = messageTextObject.getString("body");
+                System.out.println(content);
+                MessageSenderService.sendMessage("A wise man once said: " + content);
             }
             return new ResponseEntity<>("Message Received", HttpStatus.OK);
-        } catch (JSONException e) {
+        } catch (JSONException | IOException e) {
             return new ResponseEntity<>("Request body JSON improperly formed", HttpStatus.BAD_REQUEST);
         }
     }

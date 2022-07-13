@@ -12,39 +12,43 @@ import java.net.URL;
 @Service
 public class MessageSenderService {
 
-    private static final String urlStart = "https://graph.facebook.com/v13.0/";
-    private static final String urlEnd = "/messages?access_token=";
-    private static final String fromNumber = "109606135123188";
+    private static final String fromNumberID = "109606135123188";
+    private static final String urlString = "https://graph.facebook.com/v13.0/" + fromNumberID + "/messages";
+
     private static final String toNumber = "919148506961";
 
-    public static void sendMessage(String message, String accessToken) throws IOException {
+    public static void sendMessage(String message) throws IOException {
+
         // Establish connection
-        URL url = new URL(urlStart + fromNumber + urlEnd);
+        URL url = new URL(urlString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
 
-        // Add header data
+        // Add headers
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        connection.setRequestProperty(HttpHeaders.ACCEPT, "application/json");
-        String tokenHeaderData = "Bearer " + accessToken;
-        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, tokenHeaderData);
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + AccessTokenHolder.access_token);
 
         // Build body
-        JSONObject body = new JSONObject();
-        body.put("messaging_product", "whatsapp");
-        body.put("to", MessageSenderService.toNumber);
-
         JSONObject messageJSON = new JSONObject();
-        messageJSON.put("body", message);
-        body.put("text", messageJSON);
+        messageJSON.put("messaging_product", "whatsapp");
+        messageJSON.put("to", "919148506961");
+
+        JSONObject textJSON = new JSONObject();
+        textJSON.put("body", message);
+
+        messageJSON.put("text", textJSON);
 
         // Add body
         OutputStream outStream = connection.getOutputStream();
         outStream.write(messageJSON.toString().getBytes());
+
+        // Get result
+        System.out.println(connection.getResponseCode());
+        System.out.println(connection.getResponseMessage());
     }
 
-    public static void sendTemplate(String accessToken) throws IOException {
+    public static void sendTemplate() throws IOException {
 
         // Establish connection
         URL url = new URL("https://graph.facebook.com/v13.0/109606135123188/messages");
@@ -54,7 +58,7 @@ public class MessageSenderService {
 
         // Add headers
         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        connection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + AccessTokenHolder.access_token);
 
         // Build body
         JSONObject messageJSON = new JSONObject();
