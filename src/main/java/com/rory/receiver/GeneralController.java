@@ -4,7 +4,6 @@ import com.rory.receiver.services.MessageReceiverService;
 import com.rory.receiver.services.MessageSenderService;
 import com.rory.receiver.services.VerificationService;
 
-import org.apache.coyote.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,9 @@ public class GeneralController {
     }
 
     @GetMapping("/webhook")
-    public ResponseEntity<String> verification(@RequestParam("hub.mode") String mode, @RequestParam("hub.verify_token") String verify_token, @RequestParam("hub.challenge") String challenge){
+    public ResponseEntity<String> verification(@RequestParam("hub.mode") String mode,
+                                               @RequestParam("hub.verify_token") String verify_token,
+                                               @RequestParam("hub.challenge") String challenge){
         return VerificationService.verify(mode, verify_token, challenge);
     }
 
