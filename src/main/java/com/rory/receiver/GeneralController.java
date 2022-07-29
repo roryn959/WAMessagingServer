@@ -31,6 +31,7 @@ public class GeneralController {
 
     @PostMapping(value = "/webhook", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> receiveMessage(@RequestBody String jsonString){
+        System.out.println("Message received.");
         try {
             JSONObject messageJSON = new JSONObject(jsonString);
             // For now as a test, call the service to echo the message.

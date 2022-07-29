@@ -15,6 +15,7 @@ public class MessageReceiverService {
     public static ResponseEntity<String> wiseManEcho(JSONObject jsonObject) {
         // When message is received, responds with the same message content prepended with 'a wise man once said'
 
+        System.out.println("Echoing as wise man...");
         try {
             JSONArray messages = jsonObject.getJSONArray("entry").getJSONObject(0).getJSONArray("changes").getJSONObject(0).getJSONObject("value").getJSONArray("messages");
 

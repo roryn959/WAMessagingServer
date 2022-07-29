@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class VerificationService {
 
     public static ResponseEntity<String> verify(String mode, String verify_token, String challenge){
+        System.out.println("Attempting verification...");
         // Check all fields are present
         if (mode != null && verify_token != null && challenge != null){
             // Check that mode and verification token are correct
