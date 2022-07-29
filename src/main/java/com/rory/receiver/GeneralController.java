@@ -42,14 +42,18 @@ public class GeneralController {
 
     @PostMapping(value = "/sendText", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> sendMessage(@RequestBody String messageJSONString){
+        System.out.println(messageJSONString);
         // Convert body to JSON and extract message
         String message;
+
         try {
             JSONObject messageJSON = new JSONObject(messageJSONString);
             message = messageJSON.getString("text");
         } catch (JSONException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+
+        System.out.println("Message extracted properly...");
 
         try {
             return MessageSenderService.sendMessage(message);
