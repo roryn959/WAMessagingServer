@@ -43,7 +43,6 @@ public class GeneralController {
 
     @PostMapping(value = "/sendText", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> sendMessage(@RequestBody String messageJSONString){
-        System.out.println(messageJSONString);
         // Convert body to JSON and extract message
         String message;
 
